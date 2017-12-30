@@ -3,7 +3,6 @@ import time
 import sys
 import operator
 from collections import defaultdict
-import tensorflow as tf
 import numpy as np
 import json
 
@@ -40,14 +39,14 @@ def verboserate(iterable, time_wait=5, report=None):
 sort_keys = (lambda x: sorted(x.items(), key=operator.itemgetter(1), reverse=True))
 
 #util for getting the last relevant output from output of dynamic_rnn's
-def last_relevant(output, length):
-    batch_size = tf.shape(output)[0]
-    max_length = tf.shape(output)[1]
-    out_size = tf.shape(output)[2]
-    index = tf.range(0, batch_size) * max_length + (length - 1)
-    flat = tf.reshape(output, [-1, out_size])
-    relevant = tf.gather(flat, index)
-    return relevant
+# def last_relevant(output, length):
+#     batch_size = tf.shape(output)[0]
+#     max_length = tf.shape(output)[1]
+#     out_size = tf.shape(output)[2]
+#     index = tf.range(0, batch_size) * max_length + (length - 1)
+#     flat = tf.reshape(output, [-1, out_size])
+#     relevant = tf.gather(flat, index)
+#     return relevant
 
 
 def num_facts_statistics(input_file):

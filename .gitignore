@@ -1,0 +1,4 @@
+*.pyc
+*.pkl
+expt_outputs/*
+*._*

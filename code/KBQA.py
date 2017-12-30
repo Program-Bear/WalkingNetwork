@@ -2,6 +2,7 @@ from __future__ import division
 import tensorflow as tf
 import abc
 import util
+import pdb
 
 
 class QAbase(object):
@@ -108,6 +109,7 @@ class QAbase(object):
 
     def seek_attention(self, question_embedding, key, value, C, mask):
         """ Iterative attention. """
+        pdb.set_trace()
         for h in range(self.hops):
             expanded_question_embedding = tf.expand_dims(question_embedding, 1)
             # self.key*expanded_question_embedding [B, M, 2D]; self.attn_weights: [B,M]
