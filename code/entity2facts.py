@@ -58,8 +58,8 @@ def entity2facts(facts, dic, entity_vocab, relation_vocab, max_mem, entities):
 def read_kb_facts():
     facts = []
     #facts_list = defaultdict(list)
-    print('Reading kb file at {}'.format("freebase.spades.txt"))
-    with open("freebase.spades.txt") as fb:
+    print('Reading kb file at {}'.format("../kb/freebase.spades.txt"))
+    with open("../kb/freebase.spades.txt") as fb:
         for counter, line in tqdm(enumerate(fb)):
             line = line.strip()
             line = line[1:-1]
@@ -77,8 +77,8 @@ if __name__ == "__main__":
    # print(a)
    # print(b)
    # print(c)
-   entity_object = open("entity_vocab.json")
-   relation_object = open("relation_vocab.json")
+   entity_object = open("../vocab/entity_vocab.json")
+   relation_object = open("../vocab/relation_vocab.json")
    entity_voc = json.loads(entity_object.read())
    relation_voc = json.loads(relation_object.read())
 
