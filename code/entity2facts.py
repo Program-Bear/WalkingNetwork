@@ -66,6 +66,8 @@ def read_kb_facts():
             e1, r1, r2, e2 = [a.strip('\'') for a in [x.strip() for x in line.split(',')]]
             r = r1 + '_' + r2
             facts.append({'e1': e1, 'r': r, 'e2': e2})
+            r = r2 + '_' + r1 
+            facts.append({'e1': e2, 'r': r, 'e2': e1}) # add both 
            # facts_list[e1].append(counter)  # just store the fact counter instead of the fact
     return facts
 
