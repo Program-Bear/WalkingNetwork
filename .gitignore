@@ -2,3 +2,6 @@
 *.pkl
 expt_outputs/*
 *._*
+*.zip
+*.swp
+*.txt
