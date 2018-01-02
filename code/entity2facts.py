@@ -12,7 +12,7 @@ def process(temp):
 
 def genDict():
     dic = {}
-    file_object = open("entityInfo.txt",'r')
+    file_object = open("code/entityInfo.dat",'r')
     lines = file_object.readlines()
     print("start generating dictionary")
     for line in tqdm(lines):
@@ -47,7 +47,7 @@ def entity2facts(facts, dic, entity_vocab, relation_vocab, max_mem, entities):
         try:
             tu = dic[entity]
         except:
-            print("%d does not exists"%entity)
+            # print("%d does not exists"%entity)
             continue
         for mem_index in xrange(tu[0], tu[0]+tu[1]):
             print("memory of %d"%mem_counter)
@@ -69,8 +69,8 @@ def entity2facts(facts, dic, entity_vocab, relation_vocab, max_mem, entities):
 def read_kb_facts():
     facts = []
     #facts_list = defaultdict(list)
-    print('Reading kb file at {}'.format("freebase.spades.txt"))
-    with open("freebase.spades.txt") as fb:
+    print('Reading kb file at {}'.format("kb/freebase.spades.txt"))
+    with open("kb/freebase.spades.txt") as fb:
         for counter, line in tqdm(enumerate(fb)):
             line = line.strip()
             line = line[1:-1]
@@ -80,7 +80,20 @@ def read_kb_facts():
            # facts_list[e1].append(counter)  # just store the fact counter instead of the fact
     return facts
 
+def prepare():
+    global entity_object, relation_object, entity_voc, relation_voc, facts
+    entity_object = open("vocab/entity_vocab.json")
+    relation_object = open("vocab/relation_vocab.json")
+    entity_voc = json.loads(entity_object.read())
+    relation_voc = json.loads(relation_object.read())
 
+    facts = read_kb_facts()
+dic = genDict()
+prepare()
+
+def get_memory(entities):
+    mem = entity2facts(facts, dic, entity_voc, relation_voc, 2147483647, entities)
+    return mem
 if __name__ == "__main__":
    # file_object = open("entityInfo.txt",'r')
    # lines = file_object.readlines()
@@ -88,20 +101,14 @@ if __name__ == "__main__":
    # print(a)
    # print(b)
    # print(c)
-   entity_object = open("entity_vocab.json")
-   relation_object = open("relation_vocab.json")
-   entity_voc = json.loads(entity_object.read())
-   relation_voc = json.loads(relation_object.read())
+   
+   mem = get_memory([824729,824730,407779])
+   
+   print(mem[0])
+   print(mem[1])
+   print(mem[2])
 
-   facts = read_kb_facts()
-   dic = genDict()
-    
-   mem = entity2facts(facts, dic, entity_voc, relation_voc, 2147483647, [730394, 1458844, 1050595, 908309,1789012])
-   print(mem)
-   #print(mem[0])
-   #print(mem[1])
-   #print(mem[2][3])
-   #print(mem[3][4])
+
    #print(dic[824729])
    #print(dic[407784])
    

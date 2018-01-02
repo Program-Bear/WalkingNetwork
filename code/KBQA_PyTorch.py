@@ -11,6 +11,7 @@ from torch.autograd import Variable
 import torch.nn.functional as F
 import pdb
 from utils.functions import gumbel_softmax
+from torch.nn.functional import softmax
 
 # Truncated Backpropagation 
 def detach(states):
@@ -83,6 +84,8 @@ class QAbase(nn.Module):
                                      batch_first = True, 
                                      bidirectional = True)
         
+    def get_entity_embedding(self, entity_distribution):
+        return torch.mm(entity_distribution, self.entity_decoder.weight)
     def get_question_embedding(self, question, question_lengths):
         """ 
         Encodes the question. Current implementation is encoding with biLSTM.
@@ -141,7 +144,7 @@ class QAbase(nn.Module):
             # self.key*expanded_question_embedding [B, M, 2D]; self.attn_weights: [B,M]
             attn_logits = torch.matmul(key, expanded_question_embedding).view(batch_size, -1)
             attn_logits = attn_logits * mask + C * (1 - mask)
-            self.attn_weights = gumbel_softmax(attn_logits, hard=True)
+            self.attn_weights = softmax(attn_logits)
             # self.attn_weights_all_hops.append(self.attn_weights)
 
             # attn_weights_reshape: [B, M, 1]
@@ -206,7 +209,26 @@ class KBQA(QAbase):
         # project down
         model_answer = self.Linear2(attn_ques) # model_answer: [B, D]
         logits = self.entity_decoder(model_answer)  # scores: [B, num_entities]
-        return logits
+        return logits, attn_ques
+
+    def forward2(self, memory, ques, question_lengths):
+        # split memory and get corresponding embeddings
+        e1 = memory[:, :, 0]
+        r = memory[:, :, 1]
+        e2 = memory[:, :, 2]
+        C = -1000
+        mask = (e1 != (self.entity_vocab_size - 1)).float()
+        key = self.get_key_embedding(e1, r)
+        value = self.get_value_embedding(e2)
+
+        # get attention on retrived informations based on the question
+        attn_ques = self.seek_attention(ques, key, value, C, mask)
+
+        # output embeddings - share with entity lookup table
+        # project down
+        model_answer = self.Linear2(attn_ques) # model_answer: [B, D]
+        logits = self.entity_decoder(model_answer)  # scores: [B, num_entities]
+        return logits, attn_ques
 
 class TextQA(QAbase):
     """

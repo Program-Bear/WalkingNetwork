@@ -11,6 +11,7 @@ import numpy as np
 import cPickle as pickle
 from tqdm import tqdm
 import pdb
+from walking_memeory import walking_memory
 
 
 class Trainer(object):
@@ -46,7 +47,7 @@ class Trainer(object):
                                   pretrained_entity_vectors=entity_lookup_table, verbose=verbose,
                                   separate_key_lstm=separate_key_lstm).cuda()
         elif use_kb:
-            self.model = KBQA(entity_vocab_size=entity_vocab_size, relation_vocab_size=relation_vocab_size,
+            self.model = walking_memory(entity_vocab_size=entity_vocab_size, relation_vocab_size=relation_vocab_size,
                               embedding_size=embedding_size, hops=hops, load_pretrained_model=load_model,
                               load_pretrained_vectors=load_pretrained_vectors,
                               pretrained_entity_vectors=entity_lookup_table, verbose=verbose).cuda()
