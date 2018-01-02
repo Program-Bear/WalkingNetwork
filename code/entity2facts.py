@@ -25,7 +25,7 @@ def genDict():
     return dic
     
 def get_max(dic,entities):
-    ans = 0
+    ans = 1
     for entity in entities:
         try:
             ans = max(ans, dic[entity][1])
