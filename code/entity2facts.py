@@ -12,7 +12,7 @@ def process(temp):
 
 def genDict():
     dic = {}
-    file_object = open("code/entityInfo.dat",'r')
+    file_object = open("entityInfo.dat",'r')
     lines = file_object.readlines()
     print("start generating dictionary")
     for line in tqdm(lines):
@@ -33,6 +33,18 @@ def get_max(dic,entities):
             ans = ans
     return ans
 
+def get_new_facts(facts, entity_vocab, relation_vocab):
+    new_facts = []
+    print("start generating new facts list")
+    for mem in tqdm(facts):
+        temp = []
+        temp.append(entity_vocab[mem['e1']] if mem['e1'] in entity_vocab else entity_vocab['UNK'])
+        temp.append(relation_vocab[mem['r']] if mem['r'] in relation_vocab else relation_vocab['UNK'])
+        temp.append(entity_vocab[mem['e2']] if mem['e2'] in entity_vocab else entity_vocab['UNK'])
+        new_facts.append(temp)
+    return new_facts
+
+
 def entity2facts(facts, dic, entity_vocab, relation_vocab, max_mem, entities):
     max_num = get_max(dic,entities)
 
@@ -50,11 +62,14 @@ def entity2facts(facts, dic, entity_vocab, relation_vocab, max_mem, entities):
             # print("%d does not exists"%entity)
             continue
         for mem_index in xrange(tu[0], tu[0]+tu[1]):
-            print("memory of %d"%mem_counter)
+            # print("memory of %d"%mem_counter)
             mem = facts[mem_index]
-            e1_int = entity_vocab[mem['e1']] if mem['e1'] in entity_vocab else entity_vocab['UNK']
-            e2_int = entity_vocab[mem['e2']] if mem['e2'] in entity_vocab else entity_vocab['UNK']
-            r_int = relation_vocab[mem['r']] if mem['r'] in relation_vocab else relation_vocab['UNK']
+            #e1_int = entity_vocab[mem['e1']] if mem['e1'] in entity_vocab else entity_vocab['UNK']
+            #e2_int = entity_vocab[mem['e2']] if mem['e2'] in entity_vocab else entity_vocab['UNK']
+            #r_int = relation_vocab[mem['r']] if mem['r'] in relation_vocab else relation_vocab['UNK']
+            e1_int = mem[0]
+            r_int = mem[1]
+            e2_int = mem[2]
 
             answer[counter][mem_counter][0] = e1_int
             answer[counter][mem_counter][1] = r_int
@@ -69,8 +84,8 @@ def entity2facts(facts, dic, entity_vocab, relation_vocab, max_mem, entities):
 def read_kb_facts():
     facts = []
     #facts_list = defaultdict(list)
-    print('Reading kb file at {}'.format("kb/freebase.spades.txt"))
-    with open("kb/freebase.spades.txt") as fb:
+    print('Reading kb file at {}'.format("../kb/freebase.spades.txt"))
+    with open("../kb/freebase.spades.txt") as fb:
         for counter, line in tqdm(enumerate(fb)):
             line = line.strip()
             line = line[1:-1]
@@ -81,19 +96,22 @@ def read_kb_facts():
     return facts
 
 def prepare():
-    global entity_object, relation_object, entity_voc, relation_voc, facts
-    entity_object = open("vocab/entity_vocab.json")
-    relation_object = open("vocab/relation_vocab.json")
+    global entity_object, relation_object, entity_voc, relation_voc, facts, new_facts
+    entity_object = open("../vocab/entity_vocab.json")
+    relation_object = open("../vocab/relation_vocab.json")
     entity_voc = json.loads(entity_object.read())
     relation_voc = json.loads(relation_object.read())
 
     facts = read_kb_facts()
+    new_facts = get_new_facts(facts, entity_voc, relation_voc)
+
 dic = genDict()
 prepare()
 
 def get_memory(entities):
-    mem = entity2facts(facts, dic, entity_voc, relation_voc, 2147483647, entities)
+    mem = entity2facts(new_facts, dic, entity_voc, relation_voc, 2147483647, entities)
     return mem
+
 if __name__ == "__main__":
    # file_object = open("entityInfo.txt",'r')
    # lines = file_object.readlines()
@@ -104,10 +122,7 @@ if __name__ == "__main__":
    
    mem = get_memory([824729,824730,407779])
    
-   print(mem[0])
-   print(mem[1])
-   print(mem[2])
-
+   print(mem)
 
    #print(dic[824729])
    #print(dic[407784])
