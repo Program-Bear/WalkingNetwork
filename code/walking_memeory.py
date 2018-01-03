@@ -22,12 +22,14 @@ class walking_memory(nn.Module):
         mem = get_memory(entities)
         entity_emb = self.kbqa.get_entity_embedding(entity_distribution)
         attn_ques = F.tanh(self.project(torch.cat([attn_ques, entity_emb], 1)))
+        attn_ques = F.dropout(attn_ques, p = 0.5)
         logits, attn_ques = self.kbqa.forward2(Variable(torch.LongTensor(mem.astype(int))).cuda(),  attn_ques, question_lengths)
         entity_distribution = gumbel_softmax(logits, hard=True)
         entities = torch.max(entity_distribution, dim = 1)[1]
         mem = get_memory(entities)
         entity_emb = self.kbqa.get_entity_embedding(entity_distribution)
         attn_ques = F.tanh(self.project(torch.cat([attn_ques, entity_emb], 1)))
+        attn_ques = F.dropout(attn_ques, p = 0.5)
         logits, attn_ques = self.kbqa.forward2(Variable(torch.LongTensor(mem.astype(int))).cuda(), attn_ques, question_lengths)
         return logits
 

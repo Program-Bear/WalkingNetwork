@@ -204,6 +204,7 @@ class KBQA(QAbase):
 
         # get attention on retrived informations based on the question
         attn_ques = self.seek_attention(ques, key, value, C, mask)
+        attn_ques = F.dropout(attn_ques, p = 0.5)
 
         # output embeddings - share with entity lookup table
         # project down
@@ -223,6 +224,8 @@ class KBQA(QAbase):
 
         # get attention on retrived informations based on the question
         attn_ques = self.seek_attention(ques, key, value, C, mask)
+        attn_ques = F.dropout(attn_ques, p = 0.5)
+
 
         # output embeddings - share with entity lookup table
         # project down
