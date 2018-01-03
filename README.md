@@ -1,7 +1,8 @@
-### This repo contains the tensorflow implementation of the paper "[Question Answering on Knowledge Bases and Text using Universal Schema and Memory Networks](https://arxiv.org/abs/1704.08384)".
+### PyTorch implementation of Walking Memory
 
 ### Dependencies
-* TensorFlow <= 0.12
+* PyTorch >= 0.2.0
+* python == 2.7 or python == 3.6
 
 ## Training
 I have set up training with most default params on a very small dataset so that it is easier to get started. Just running the script should work.
@@ -21,10 +22,4 @@ The embeddings used for initializing the network can be downloaded from [here](h
 
 ### Model outputs
 We are also releasing the output predictions of our model for comparison. Find them in the model_outputs directory.
-
-### Trained Model
-We are also sharing our pretrained model. Get it [here]( http://iesl.cs.umass.edu/downloads/spades/max_dev_out.ckpt). The following will load the model and get the answers from the dev set. Please change the config appropriately.
-```
-sh run.sh ./test_from_saved_model.sh
-```
 
